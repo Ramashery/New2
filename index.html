@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Template — scroll-driven landing</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- SVG-спрайт: только нейтральные иконки (без брендовых логотипов оригинала) -->
+  <svg style="display:none;">
+    <symbol id="icon-mark" viewBox="0 0 39 31">
+      <path d="M0,31L7,31L7,6.781L0,0L0,31ZM16,16L16,31L23,31L23,16L19.5,19.387L16,16ZM32,6.781L32,31L39,31L39,0L32,6.781Z"></path>
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 40 40">
+      <path d="M25.919,21L12,21L12,19L25.919,19L19.219,10.625L20.781,9.375L29.281,20L20.781,30.625L19.219,29.375L25.919,21Z"></path>
+    </symbol>
+    <symbol id="icon-badge" viewBox="0 0 58 58">
+      <circle cx="29" cy="29" r="27" fill="none" stroke="currentColor" stroke-width="3"></circle>
+      <circle cx="29" cy="29" r="10" fill="currentColor"></circle>
+    </symbol>
+  </svg>
+
+  <!-- ===== ХЕДЕР: фикс, mix-blend-mode: exclusion ===== -->
+  <header class="site-header">
+    <div class="grid">
+      <svg><use href="#icon-mark"></use></svg>
+      <span class="label mm up">Products</span>
+      <a href="#contact" class="talk mm up">Связаться</a>
+    </div>
+  </header>
+
+  <!-- ===== ПЛАВАЮЩИЕ ЭЛЕМЕНТЫ: следят за прогрессом hero ===== -->
+  <div class="float-mark" data-follow="hero"><span>BRAND</span></div>
+  <div class="float-badge" data-follow="hero"><svg><use href="#icon-badge"></use></svg></div>
+
+  <main class="page">
+
+    <!-- ===== HERO =====
+         1) секция публикует --hero-progress глобально — читают плавающие marks
+         2) .hero__image-block — локальный --progress, трансформация картинки
+         3) .hero__video-pin (200vh) — «карточка», которая растёт и раскрывается
+            на весь экран по мере скролла, приходя на смену hero-картинке -->
+    <section class="hero" id="hero" data-progress data-progress-var="--hero-progress">
+      <div class="hero__image-block" data-progress data-progress-var="--progress">
+        <figure class="hero__image">
+          <img class="lazy-img" src="https://placehold.co/1200x1500/111111/eee?text=Hero+image" alt="Hero visual">
+        </figure>
+      </div>
+      <div class="hero__video-pin" data-pin-progress data-progress-var="--progress">
+        <div class="hero__video-block">
+          <div class="hero__video-wrap">
+            <video muted playsinline loop autoplay poster="https://placehold.co/1600x900/000000/222?text=Video+background"></video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INTRO: сплит-заголовок (word-scrub) + картинка + абзац =====
+         В оригинале --progress биндится на сам заголовок (span), а не на секцию —
+         offset-top:-50% сдвигает окно прокрутки, растягивая reveal слов -->
+    <section class="intro" id="intro">
+      <div class="grid">
+        <span class="h3 m-h5 intro__title split-word" data-split="word"
+              data-progress data-progress-var="--progress" data-offset-top="-50%">
+          We build the world's highest quality eyewear – precision engineered optical instruments that transcend the characterization as mere fashion accessories.
+        </span>
+        <figure class="intro__image reveal-clip">
+          <img class="lazy-img" src="https://placehold.co/900x1100/e7e2d8/222?text=Image+01" alt="">
+        </figure>
+        <p class="m intro__text">
+          Второй слой смысла — пояснительный абзац. Здесь можно рассказать о ценностях, материалах или подходе компании. Текст — плейсхолдер, замените на свой.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== FEATURE: заголовок + кнопка + описание + 2 картинки (scale-in) ===== -->
+    <section class="feature" id="feature" data-progress data-progress-var="--progress">
+      <div class="grid">
+        <span class="lrg feature__title">Название<br>раздела</span>
+        <button class="btn feature__button">
+          <span class="mm up">Узнать больше</span>
+          <figure><svg><use href="#icon-arrow"></use></svg></figure>
+        </button>
+        <p class="mm feature__text">
+          Короткое описание фичи или продукта — до двух-трёх строк, поясняющих ценность этого блока для читателя.
+        </p>
+      </div>
+      <div class="feature__images">
+        <figure><img class="lazy-img" src="https://placehold.co/700x900/222/eee?text=Image+02" alt=""></figure>
+        <figure><img class="lazy-img" src="https://placehold.co/700x900/222/eee?text=Image+03" alt=""></figure>
+      </div>
+    </section>
+
+    <!-- ===== SHOWCASE (Ultimate Durability): по центру заголовок + 3 картинки
+         на именованном прогрессе --showcase-progress, растянутом offset-top:-50% ===== -->
+    <section class="showcase" id="showcase" data-progress data-progress-var="--showcase-progress" data-offset-top="-50%">
+      <div class="grid">
+        <span class="h1 tac showcase__title">Ultimate<br>Durability</span>
+        <p class="tac showcase__text">
+          В мире одноразовых вещей мы делаем ставку на долговечность: продукт, который служит годами, а не сезон.
+        </p>
+      </div>
+      <figure class="showcase__img i-1"><img class="lazy-img" src="https://placehold.co/500x650/ddd/222?text=04" alt=""></figure>
+      <figure class="showcase__img i-2"><img class="lazy-img" src="https://placehold.co/600x800/ccc/222?text=05" alt=""></figure>
+      <figure class="showcase__img i-3"><img class="lazy-img" src="https://placehold.co/500x650/ddd/222?text=06" alt=""></figure>
+    </section>
+
+    <!-- ===== DETAILS: pin-scrollytelling секция высотой 400vh ===== -->
+    <section class="details__pin" id="details" data-pin-progress data-progress-var="--progress">
+      <div class="details__image">
+        <figure>
+          <img class="lazy-img" src="https://placehold.co/900x1200/111/eee?text=Image+07" alt="">
+        </figure>
+      </div>
+      <div class="details__panel">
+        <div class="grid">
+          <div class="details__panel-inner">
+            <span class="lrg details__title split-char" data-split="char-random">Детали</span>
+            <div class="subgrid details__cols">
+              <p class="tt-1 split-word" data-split="word">Первая колонка раскрывает первый аспект темы — материалы, технологию или подход к продукту.</p>
+              <p class="mm tt-2 split-word" data-split="word">Вторая колонка развивает мысль дальше, добавляя конкретику, цифры или примеры использования.</p>
+              <p class="mm tt-3 split-word" data-split="word">Третья колонка — итог или призыв к действию, логично завершающий блок повествования.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer id="contact" data-progress data-progress-var="--progress" data-offset-top="-50%">
+      <div class="footer__inner">
+        <div class="grid">
+          <span class="h3 m-h5 tt-1">Свяжитесь с нами.</span>
+          <span class="mm tt-2">Этот раздел содержит контактную информацию: email, соцсети или форму обратной связи.</span>
+          <p class="mm tt-3">
+            Опишите здесь, как с вами связаться и что произойдёт после отправки заявки.
+          </p>
+          <p class="mm tt-4">
+            Дополнительный абзац для юридической информации, реквизитов или условий использования сайта.
+          </p>
+        </div>
+        <div class="grid footer__meta">
+          <span class="mm year">© <span id="year"></span></span>
+          <span class="mm concept">Шаблон на основе демо-макета <a href="https://fiddle.digital" target="_blank">Fiddle.Digital</a></span>
+          <span class="mm dg">Собрано без фреймворка — vanilla HTML/CSS/JS</span>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ===== Кастомный скроллбар (десктоп) ===== -->
+  <div class="scrollbar">
+    <div class="thumb"></div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
