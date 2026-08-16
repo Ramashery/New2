@@ -1,0 +1,463 @@
+/* =========================================================================
+   ДИЗАЙН-ТОКЕНЫ
+   ========================================================================= */
+:root{
+  --c-black:#000;
+  --c-white:#fff;
+  --c-grey:#807e79;
+  --c-accent:#fffdf3;      /* акцентный светлый (был c-yellow-light) */
+
+  --font: 'Manrope', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;      /* body / bold display */
+  --font-m: 'Manrope', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;    /* medium display */
+
+  --type-step: 1.25;
+  --p: 1rem;
+  --m: calc(var(--p) / var(--type-step));
+  --mm: calc(var(--m) / var(--type-step));
+  --h6: calc(var(--p) * var(--type-step));
+  --h5: calc(var(--h6) * var(--type-step));
+  --h4: calc(var(--h5) * var(--type-step));
+  --h3: calc(var(--h4) * var(--type-step));
+  --h2: calc(var(--h3) * var(--type-step));
+  --h1: calc(var(--h2) * var(--type-step));
+  --large: clamp(var(--h1), calc(var(--h1) * pow(var(--type-step), 4)), 8vw);
+  --ls: -2; /* letter-spacing intensity */
+
+  --g-columns: 6;
+  --g-gap: 1rem;
+  --g-margin: calc(var(--g-gap) * 1);
+  --col: calc(100vw / 6 - var(--g-margin) * 2 / 6 - var(--g-gap) * 5 / 6);
+
+  --ease-cubic: cubic-bezier(.22,.31,0,1);
+  --ease-cubic-in: cubic-bezier(.69,0,0,1);
+  --ease-smooth: cubic-bezier(.5,0,.3,1);
+  --ease-fast: cubic-bezier(0,.81,.35,1);
+
+  /* фикс мобильного 100vh, выставляется в main.js */
+  --vh: 1vh;
+  --vw: 1vw;
+}
+@media (min-width:1024px){
+  :root{
+    --g-columns:12;
+    --g-margin: calc(var(--g-gap) * 2);
+    --col: calc(100vw / 12 - var(--g-margin) * 2 / 12 - var(--g-gap) * 11 / 12);
+  }
+  html{ font-size:20px; }
+}
+@media (min-width:1600px){ html{ font-size:22px; } }
+@media (min-width:1920px){ html{ font-size:24px; } }
+@media (min-width:2560px){ html{ font-size:28px; } }
+
+/* =========================================================================
+   RESET
+   ========================================================================= */
+*{ box-sizing:border-box; }
+h1,h2,h3,h4,h5,h6,p{ margin:0; }
+ul,ol{ list-style:none; margin:0; padding:0; }
+figure{ margin:0; overflow:hidden; position:relative; }
+figure > img{ width:100%; height:100%; object-fit:cover; }
+img,svg,video{ display:block; width:100%; }
+svg{ aspect-ratio:1/1; fill:var(--c-black); }
+button{ background:none; border:none; cursor:pointer; color:var(--c-white); font-family:var(--font); padding:0; touch-action:manipulation; }
+a{ color:inherit; text-decoration:none; }
+html{
+  background:var(--c-white); color:var(--c-black); font-family:var(--font);
+  font-size:16px; line-height:1.2; -webkit-font-smoothing:antialiased;
+}
+body{ overflow-x:hidden; }
+section{ position:relative; }
+
+/* =========================================================================
+   ТИПОГРАФИКА
+   ========================================================================= */
+.h1{ font-family:var(--font-m); font-size:var(--h1); letter-spacing:calc(var(--h1)/100*var(--ls)); line-height:.857; }
+.h2{ font-size:var(--h2); letter-spacing:calc(var(--h2)/100*var(--ls)); line-height:.952; }
+.h3{ font-size:var(--h3); letter-spacing:calc(var(--h3)/100*var(--ls)); line-height:1; }
+.h4{ font-size:var(--h4); line-height:1; }
+.lrg{ font-family:var(--font-m); font-size:var(--large); letter-spacing:calc(var(--large)/100*var(--ls)); line-height:.859; }
+.m{ font-size:var(--m); }
+.mm{ font-feature-settings:"ss03"; font-size:var(--mm); }
+.up{ text-transform:uppercase; line-height:1; }
+.tac{ text-align:center; }
+@media (max-width:1024px){
+  .m-h5{ font-size:var(--h5); line-height:1.1; }
+}
+
+/* =========================================================================
+   СЕТКА
+   .grid — обёртка (аналог .-w), дети позиционируются через
+   --top/--left/--width/--height, заданные для каждого блока ниже
+   ========================================================================= */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(var(--g-columns), 1fr);
+  grid-column-gap:var(--g-gap);
+  margin:0 var(--g-margin);
+  position:relative;
+}
+.grid > *{
+  --top:1; --left:1; --width:1; --height:1;
+  grid-column-start: var(--left);
+  grid-column-end: calc(var(--left) + var(--width));
+  grid-row-start: var(--top);
+  grid-row-end: calc(var(--top) + var(--height));
+}
+/* вложенная под-сетка (аналог .-gc), например колонки внутри details */
+.subgrid{
+  display:grid;
+  grid-template-columns:repeat(var(--sub-columns,1),1fr);
+  grid-column-gap:var(--g-gap);
+  position:relative;
+}
+.subgrid > *{
+  --top:1; --left:1; --width:1; --height:1;
+  grid-column-start: var(--left);
+  grid-column-end: calc(var(--left) + var(--width));
+  grid-row-start: var(--top);
+  grid-row-end: calc(var(--top) + var(--height));
+}
+
+/* =========================================================================
+   ХЕДЕР (фикс, mix-blend-mode: exclusion — читаемо на любом фоне)
+   ========================================================================= */
+.site-header{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding-top:var(--m);
+  color:var(--c-accent);
+  mix-blend-mode:exclusion;
+}
+.site-header svg{ aspect-ratio:39/31; fill:var(--c-accent); width:2rem; justify-self:start; --top:1; --left:1; --width:1; }
+.site-header .label{ --top:1; --left:3; --width:2; justify-self:center; text-align:center; }
+.site-header .talk{ --top:1; --left:5; --width:2; justify-self:end; }
+@media (min-width:1024px){
+  .site-header .label{ --left:6; --width:2; }
+  .site-header .talk{ --left:11; --width:2; }
+}
+
+/* =========================================================================
+   ПЛАВАЮЩИЕ ЭЛЕМЕНТЫ (следят за прогрессом hero, mix-blend exclusion)
+   ========================================================================= */
+.float-mark{
+  position:fixed; left:var(--g-margin); top:calc(var(--col) + var(--g-gap));
+  z-index:100; pointer-events:none; overflow:hidden; mix-blend-mode:exclusion;
+  transform:translateZ(0);
+}
+.float-mark span{
+  display:block; font-family:var(--font-m); color:var(--c-accent);
+  font-size:2rem; letter-spacing:.02em;
+  transition:translate .9s var(--ease-cubic); translate:0 0;
+}
+.float-mark.is-active span{ translate:0 100%; }
+
+.float-badge{
+  position:fixed; right:var(--g-margin); bottom:var(--g-gap);
+  z-index:100; pointer-events:none; mix-blend-mode:exclusion;
+}
+.float-badge svg{
+  width:var(--col); fill:var(--c-accent); scale:1; transform-origin:50% 50%;
+  transition:scale .9s var(--ease-cubic);
+}
+.float-badge.is-active svg{ scale:.5; }
+
+@media (min-width:1024px){
+  .float-mark{
+    bottom:50%; top:auto;
+    translate: calc(var(--col)*2 + var(--g-gap)*2 - (var(--col)*2 + var(--g-gap)*2) * var(--hero-progress, 0)) 0;
+  }
+  .float-mark span{ font-size:3.5rem; }
+  .float-badge{
+    bottom:50%; top:auto;
+    translate: calc(var(--col)*-2 - var(--g-gap)*2 + (var(--col)*2 + var(--g-gap)*2) * var(--hero-progress, 0)) 0;
+  }
+  .float-badge svg{ width:3rem; transform-origin:100% 50%; }
+}
+
+/* =========================================================================
+   HERO
+     --hero-progress (публикуется глобально) — плавающие marks
+     --progress на .hero__image-block  — трансформация картинки
+     --progress на .hero__video-pin    — «карточка» видео растёт и раскрывается
+       на весь экран (sticky-pin высотой 200vh), приходя на смену картинке
+   ========================================================================= */
+.hero{ background:var(--c-black); position:relative; }
+.hero__image-block{ position:relative; height:calc(var(--vh) * 80); contain:paint; }
+.hero__image{
+  position:absolute; inset:0; height:100%;
+  opacity: calc(1 - var(--progress, 0));
+  rotate: calc(-20deg * var(--progress, 0));
+  scale: calc(1 + var(--progress, 0) * .5);
+  translate: 0 calc(50% * var(--progress, 0));
+}
+.hero__image img{ height:100%; object-fit:contain; }
+
+/* карточка видео: растёт от небольшой скруглённой рамки до полного экрана */
+.hero__video-pin{ position:relative; height:calc(var(--vh) * 200); }
+.hero__video-block{
+  position:sticky; top:0; height:calc(var(--vh) * 100);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.hero__video-wrap{
+  overflow:hidden;
+  width: calc(55% + 45% * var(--progress, 0));
+  height: calc(45vh + 55vh * var(--progress, 0));
+  border-radius: calc(2rem - 2rem * var(--progress, 0));
+}
+.hero__video-wrap video{ height:100%; width:100%; object-fit:cover; }
+
+@media (min-width:1024px){
+  .hero__image-block{ height:calc(var(--vh) * 100); }
+  .hero__image{
+    rotate: calc(-5deg * var(--progress, 0));
+    scale: calc(.5 + var(--progress, 0) * .5);
+  }
+  .hero__video-wrap{
+    width: calc(50% + 50% * var(--progress, 0));
+    height: calc(40vh + 60vh * var(--progress, 0));
+  }
+}
+
+/* =========================================================================
+   ОБЩИЕ ОТСТУПЫ
+   ========================================================================= */
+.intro{ padding-top:var(--h2); }
+.feature{ margin-top:calc(var(--large) * 2); }
+.showcase{ margin-top:calc(var(--large) * 2); }
+
+/* =========================================================================
+   INTRO — сплит-заголовок (word-scrub) + картинка + текст
+   ========================================================================= */
+.intro__title{ --top:1; --left:2; --width:5; margin-bottom:var(--h4); }
+.intro__image{ --top:2; --width:6; align-self:start; margin-bottom:var(--h4); aspect-ratio:4/3; }
+.intro__text{ --top:3; --left:2; --width:4; align-self:start; }
+@media (min-width:1024px){
+  .intro__title{ --width:8; margin-bottom:calc(var(--h1) + var(--h4)); }
+  .intro__image{ --top:2; --width:5; margin-bottom:0; }
+  .intro__text{ --top:2; --left:6; --width:5; }
+}
+
+/* =========================================================================
+   FEATURE — заголовок + кнопка + текст + 2 картинки (scale-in)
+   ========================================================================= */
+.feature__title{ --top:1; --height:1; --left:1; --width:6; align-self:end; justify-self:start; }
+.feature__button{ --top:3; --left:2; --width:3; align-self:end; justify-self:start; }
+.feature__text{ --top:2; --left:2; --width:3; align-self:end; margin-bottom:var(--h4); margin-top:var(--h4); }
+
+.btn{ display:flex; align-items:stretch; }
+.btn span{ color:var(--c-black); padding:var(--mm) var(--p); border:2px solid var(--c-black); border-radius:var(--h5); }
+.btn figure{ border:2px solid var(--c-black); border-radius:var(--h5); display:flex; align-items:center; justify-content:center; padding:.3rem; }
+.btn svg{ width:2rem; }
+
+.feature__images{ display:flex; flex-direction:column; margin:var(--h5) var(--g-margin) 0; gap:var(--g-gap); }
+.feature__images figure{ flex-grow:1; aspect-ratio:3/4; }
+.feature__images figure:first-child{ scale: calc(.5 + var(--progress, 0) * .5); transform-origin:100% 0; }
+.feature__images figure:nth-child(2){ scale: calc(.5 + var(--progress, 0) * .5); transform-origin:0 100%; }
+
+@media (min-width:1024px){
+  .feature__title{ --height:2; --left:2; --width:8; }
+  .feature__button{ --top:1; --left:9; --width:3; }
+  .feature__text{ --top:2; --left:9; --width:2; margin-bottom:0; }
+  .feature__images{ flex-direction:row; }
+}
+
+/* =========================================================================
+   SHOWCASE — центр. заголовок + 3 картинки на общем именованном
+   прогрессе --showcase-progress (аналог --durability-progress)
+   ========================================================================= */
+.showcase__title{ --top:1; --width:6; justify-self:center; text-align:center; }
+.showcase__text{ --top:2; --left:2; --width:4; margin-bottom:var(--h4); margin-top:var(--p); }
+.showcase__img{ --width:4; margin-top:var(--g-gap); height:38vh; }
+/* каждая карточка стартует на своём "уровне" (смещение + масштаб от угла)
+   и во время скролла сходится в единый ровный ряд — leveling-эффект */
+.showcase__img.i-1{
+  --top:3; --left:1; transform-origin:0 100%;
+  translate: 0 calc(6vh * (1 - var(--showcase-progress, 0)));
+}
+.showcase__img.i-2{
+  --top:4; --left:3; transform-origin:50% 0;
+  translate: 0 calc(-6vh * (1 - var(--showcase-progress, 0)));
+}
+.showcase__img.i-3{
+  --top:5; --left:2; transform-origin:100% 100%;
+  translate: 0 calc(4vh * (1 - var(--showcase-progress, 0)));
+}
+.showcase__img.i-1, .showcase__img.i-2, .showcase__img.i-3{
+  scale: calc(.5 + var(--showcase-progress, 0) * .5);
+}
+@media (min-width:1024px){
+  .showcase__title{ --width:12; }
+  .showcase__text{ --left:4; --width:6; }
+  .showcase__img{ --width:4; margin-top:0; height:32vh; }
+  /* на десктопе все три карточки лежат в одном ряду грида (--top:3), но
+     стартуют визуально "не на своём месте" за счёт translateY + scale-от-угла
+     и во время скролла синхронно "приходят" на общий уровень */
+  .showcase__img.i-1{ --top:3; --left:1; translate: 0 calc(8vh * (1 - var(--showcase-progress, 0))); }
+  .showcase__img.i-2{ --top:3; --left:5; translate: 0 calc(-8vh * (1 - var(--showcase-progress, 0))); }
+  .showcase__img.i-3{ --top:3; --left:9; translate: 0 calc(8vh * (1 - var(--showcase-progress, 0))); }
+}
+
+/* =========================================================================
+   DETAILS — «пришпиленная» scrollytelling-секция высотой 400vh:
+   картинка и текстовая панель остаются sticky, пока идёт скролл контейнера
+   ========================================================================= */
+.details__pin{
+  position:relative;
+  height:calc(var(--vh) * 400);
+  display:grid;
+  align-items:start;
+  margin-top:var(--g-margin);
+  contain:paint;
+}
+.details__pin > *{ grid-area:1/1; }
+
+.details__image{ position:sticky; top:0; contain:paint; }
+.details__image figure{
+  height:calc(var(--vh) * 100);
+  clip-path: polygon(
+    calc(50% - 50% * var(--showcase-progress, 0)) calc(50% - 50% * var(--showcase-progress, 0)),
+    calc(50% + 50% * var(--showcase-progress, 0)) calc(50% - 50% * var(--showcase-progress, 0)),
+    calc(50% + 50% * var(--showcase-progress, 0)) 100%,
+    calc(50% - 50% * var(--showcase-progress, 0)) 100%
+  );
+  scale: calc(var(--showcase-progress, 0) * 1);
+}
+.details__image img{ scale: calc(1.2 - var(--progress, 0) * .2); transform-origin:50% 100%; }
+
+.details__panel{ height:calc(var(--vh) * 100); position:sticky; top:0; }
+.details__panel-inner{
+  --left:1; --width:6; align-self:center; position:relative;
+  padding-top:var(--h3); padding-bottom:var(--h3);
+}
+.details__panel-inner > *{ position:relative; }
+.details__panel-inner::before{
+  content:""; position:absolute; inset:0; background:var(--c-accent);
+  scale:1 0; transform-origin:50% 0; transition:scale 1.2s var(--ease-cubic);
+}
+.details__panel.is-active .details__panel-inner::before{ scale:1 1; }
+
+.details__title{ justify-content:center; margin-bottom:0; }
+.details__title .char{
+  translate: calc(var(--char-r, 0) * 4vw * (1 - var(--progress, 0)))
+             calc(var(--char-r, 0) * 4vh * (1 - var(--progress, 0)));
+}
+
+.details__cols{ align-items:start; margin-top:var(--h3); --sub-columns:6; }
+.details__cols .tt-1{ --top:1; --height:2; --left:2; --width:5; }
+.details__cols .tt-2{ --top:1; --left:7; --width:5; }
+.details__cols .tt-3{ --top:2; --left:7; --width:5; margin-top:var(--m); }
+
+@media (min-width:1024px){
+  .details__panel-inner{ --left:4; --width:6; }
+}
+
+/* =========================================================================
+   FOOTER — контейнер плавно выезжает и проявляется по мере скролла
+   ========================================================================= */
+footer{ background:var(--c-black); color:var(--c-accent); overflow:hidden; contain:paint; }
+.footer__inner{
+  background:var(--c-grey);
+  padding-top:var(--h2); padding-bottom:var(--h5);
+  opacity: calc(.5 + var(--progress, 0) * .5);
+  translate: 0 calc(25% * var(--progress, 0) - 25%);
+  transform:translateZ(0);
+}
+.footer__inner .tt-1{ --top:1; --left:2; --width:5; }
+.footer__inner .tt-2{ --top:2; --left:2; --width:5; color:var(--c-black); }
+.footer__inner .tt-3{ --top:3; --left:2; --width:4; margin-top:var(--h3); }
+.footer__inner .tt-4{ --top:4; --left:2; --width:4; margin-top:var(--m); }
+
+.footer__meta{ margin-top:var(--large); }
+.footer__meta .year{ --top:1; --left:1; --width:2; align-self:end; justify-self:start; }
+.footer__meta .concept{ --top:1; --left:4; --width:2; align-self:end; justify-self:center; }
+.footer__meta .concept a{ color:var(--c-accent); }
+.footer__meta .dg{ --top:2; --left:2; --width:3; align-self:end; justify-self:start; margin-top:var(--p); }
+
+@media (min-width:1024px){
+  .footer__inner .tt-1{ --width:8; }
+  .footer__inner .tt-2{ --width:8; }
+  .footer__inner .tt-3{ --left:4; --width:4; }
+  .footer__inner .tt-4{ --left:4; --width:4; }
+  .footer__meta .year{ align-self:start; }
+  .footer__meta .concept{ --left:5; --width:4; align-self:start; }
+  .footer__meta .dg{ --top:1; --left:10; --width:3; align-self:start; justify-self:end; margin-top:0; }
+}
+
+/* =========================================================================
+   SPLIT-ТЕКСТ: непрерывный scroll-scrub reveal слов (clip-path)
+   ========================================================================= */
+.split-word{ display:flex; flex-wrap:wrap; }
+.split-word .word{
+  display:inline-flex; margin-right:.28em;
+  --word-turn: calc((var(--i, 0) - 3) / var(--total, 1));
+  --word-step: calc(1 / var(--total, 1));
+  --word-progress: clamp(0, calc((var(--progress, 0) - var(--word-turn)) / var(--word-step)), 1);
+  clip-path: inset(-15% 0 calc(115% - var(--word-progress) * 130%) 0);
+  transform: translate3d(0, calc(100% - var(--word-progress) * 100%), 0);
+}
+
+/* SPLIT-ТЕКСТ: буквы разлетаются и собираются к центру (char-random) */
+.split-char{ display:flex; flex-wrap:wrap; }
+.split-char .char{ display:inline-block; }
+
+/* SPLIT-ТЕКСТ: разовое проявление букв при входе во вьюпорт (доп. утилита) */
+.split-reveal{ display:flex; flex-wrap:wrap; }
+.split-reveal .word{ display:inline-flex; margin-right:.28em; }
+.split-reveal .char{
+  display:inline-block; opacity:0; transform:translate3d(0,2rem,0);
+  transition:opacity .3s var(--ease-cubic), transform .3s var(--ease-cubic);
+}
+.split-reveal.in-view .char{
+  opacity:1; transform:translateZ(0);
+  transition:opacity .9s var(--ease-cubic), transform .9s var(--ease-cubic);
+  transition-delay: calc(var(--i, 0) * 30ms + .3s);
+}
+
+/* =========================================================================
+   КАРТИНКИ: reveal через clip-path при входе во вьюпорт + lazy-fade
+   ========================================================================= */
+.reveal-clip{ clip-path:polygon(0 0,100% 0,100% 0,0 0); }
+.reveal-clip.in-view{
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+  transition:clip-path 1.2s var(--ease-cubic-in); transition-delay:.3s;
+}
+.lazy-img{ opacity:0; scale:1.5; transition:opacity 1.2s var(--ease-cubic), scale 1.2s var(--ease-cubic); }
+.lazy-img.is-loaded{ opacity:1; scale:1; }
+
+/* =========================================================================
+   ОБЩАЯ УТИЛИТА ПОЯВЛЕНИЯ ПРИ ЗАГРУЗКЕ (для элементов вне скролла)
+   ========================================================================= */
+.on-load{ opacity:0; transform:scale(.5); transition:transform .9s var(--ease-cubic), opacity .9s var(--ease-cubic); }
+.on-load.is-ready{ opacity:1; transform:scale(1); }
+
+/* =========================================================================
+   КАСТОМНЫЙ СКРОЛЛБАР (только десктоп)
+   ========================================================================= */
+@media (min-width:1024px){
+  .scrollbar{ position:fixed; top:0; right:0; height:100vh; width:16px; z-index:1000; }
+  .scrollbar::after{
+    content:""; position:absolute; inset:0; background:#64646426;
+    border-left:1px solid rgba(0,0,0,.025); opacity:0;
+    transform:scaleX(.7); transform-origin:right center; transition:.3s;
+  }
+  .scrollbar .thumb{
+    position:absolute; width:100%; display:flex; justify-content:center;
+    height:var(--size,10%); transform:translateY(var(--position,0));
+  }
+  .scrollbar .thumb::after{
+    content:""; position:absolute; top:4px; bottom:4px; width:11px;
+    background:#64646480; border-radius:6px; opacity:0;
+    box-shadow:inset 0 0 0 1.5px #ffffff12;
+    transform:scaleX(.7); transform-origin:right center; transition:.3s;
+  }
+  .scrollbar.is-scrolling::after, .scrollbar:hover::after{ opacity:1; }
+  .scrollbar.is-scrolling .thumb::after, .scrollbar:hover .thumb::after{ opacity:1; transform:scaleX(1); }
+}
+
+/* =========================================================================
+   REDUCED MOTION
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce){
+  *{ transition-duration:.001ms !important; animation-duration:.001ms !important; }
+  .reveal-clip, .details__panel-inner::before{ transition:none !important; }
+}
